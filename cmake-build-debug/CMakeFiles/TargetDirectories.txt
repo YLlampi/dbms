@@ -1,0 +1,3 @@
+/home/yamil/CLionProjects/dbms/cmake-build-debug/CMakeFiles/dbms.dir
+/home/yamil/CLionProjects/dbms/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/yamil/CLionProjects/dbms/cmake-build-debug/CMakeFiles/rebuild_cache.dir
