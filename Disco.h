@@ -32,7 +32,7 @@ public:
     }
 
     void setNext(Sector *next) {
-        Sector::next = next;
+        this->next = next;
     }
 };
 

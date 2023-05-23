@@ -170,17 +170,17 @@ void setDisco() {
     }
 
     for (int j = 0; j < sectoresDisco.size() - 1; j++) {
-        sectoresDisco[i]->setNext(sectoresDisco[i + 1]);
+        sectoresDisco[j]->setNext(sectoresDisco[j + 1]);
     }
     int contSectores = 0;
     Disco miDisco;
 
     for (int m = 0; m < platos; m++) {
-        std::vector<Plato> platosDisco;
+        std::vector<Plato> platosDisco(platos);
         for (int j = 0; j < SUPERFICIE; j++) {
-            std::vector<Superficie> superficiesDisco;
+            std::vector<Superficie> superficiesDisco(SUPERFICIE);
             for (int k = 0; k < pistas; k++) {
-                std::vector<Pista> pistasDisco;
+                std::vector<Pista> pistasDisco(pistas);
                 for (int u = 0; u < sectores; u++) {
                     pistasDisco[k].add(sectoresDisco[contSectores++]);
                 }
@@ -206,8 +206,7 @@ void setDisco() {
                 for (int u = 0; u < getPistas[k].getSectores().size(); u++) {
                     std::cout << "Sector: " << u + 1 << std::endl;
                     std::cout << "Data: " << getPistas[k].getSectores()[u]->getData();
-
-
+                    std::cout << "===================================================" << std::endl;
                 }
             }
         }
