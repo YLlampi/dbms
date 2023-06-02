@@ -19,8 +19,11 @@ public:
         data.resize(bytesData);
     }
 
-    const std::string &getData() const {
-        return data;
+    std::string getData() {
+        if (!this->data.empty()) {
+            return data;
+        }
+        return "null";
     }
 
     void setData(const std::string &data) {
@@ -57,7 +60,8 @@ public:
     explicit Pista(int numeroSectores) {
         this->numeroSectores = numeroSectores;
     }
-    void add(Sector* sector) {
+
+    void add(Sector *sector) {
         this->sectores.push_back(sector);
     }
 
@@ -107,8 +111,18 @@ public:
 class Disco {
 private:
     std::vector<Plato> platos;
+    int numPlatos;
+    int numSuperficies;
+    int numPistas;
+    int numBloques;
+    int numSectores;
+    int numBytes;
 public:
     Disco() = default;
+
+    Disco(int numPlatos, int numSuperficies, int numPistas, int numBloques, int numSectores, int numBytes) : numPlatos(
+            numPlatos), numSuperficies(numSuperficies), numPistas(numPistas), numBloques(numBloques), numSectores(
+            numSectores), numBytes(numBytes) {}
 
     explicit Disco(int numeroPlatos) {
         this->platos.resize(numeroPlatos);
@@ -121,6 +135,8 @@ public:
     void setPlatos(const std::vector<Plato> &platos) {
         Disco::platos = platos;
     }
+
+
 };
 
 #endif //DBMS_DISCO_H

@@ -9,6 +9,7 @@ const string NAME_FILE = BASE_PATH + "new_titanic.csv";
 const string NAME_DATA = BASE_PATH + "data.txt";
 std::string DATA;
 bool band = false;
+bool bandDisk = false;
 
 int disco;
 int platos;
@@ -159,6 +160,12 @@ void setDisco() {
     newData.erase(std::remove(newData.begin(), newData.end(), '#'), newData.end());
     newData.erase(std::remove(newData.begin(), newData.end(), ','), newData.end());
 
+    /* ---------------------------------------------------------- */
+    std::string dataAuxiliar = newData.substr(0, 100);
+    newData = dataAuxiliar;
+    /* ---------------------------------------------------------- */
+
+
     int i;
     int aux;
     for (i = 0; i < newData.size(); i += bytesSector) {
@@ -173,44 +180,50 @@ void setDisco() {
         sectoresDisco[j]->setNext(sectoresDisco[j + 1]);
     }
     int contSectores = 0;
-    Disco miDisco;
+    Disco miDisco(platos, SUPERFICIE, pistas, bloques, sectores, bytesSector);
+    bandDisk = true;
 
+    std::vector<Plato> platosDisco(platos);
     for (int m = 0; m < platos; m++) {
-        std::vector<Plato> platosDisco(platos);
+        std::vector<Superficie> superficiesDisco(SUPERFICIE);
         for (int j = 0; j < SUPERFICIE; j++) {
-            std::vector<Superficie> superficiesDisco(SUPERFICIE);
+            std::vector<Pista> pistasDisco(pistas);
             for (int k = 0; k < pistas; k++) {
-                std::vector<Pista> pistasDisco(pistas);
                 for (int u = 0; u < sectores; u++) {
-                    pistasDisco[k].add(sectoresDisco[contSectores++]);
+                    if (contSectores < sectoresDisco.size()) {
+                        pistasDisco[k].add(sectoresDisco[contSectores++]);
+                    } else {
+                        pistasDisco[k].add(new Sector(0));
+                    }
                 }
-                superficiesDisco[j].setPistas(pistasDisco);
             }
-            platosDisco[m].setSuperficies(superficiesDisco);
+            superficiesDisco[j].setPistas(pistasDisco);
         }
-        miDisco.setPlatos(platosDisco);
+        platosDisco[m].setSuperficies(superficiesDisco);
     }
+    miDisco.setPlatos(platosDisco);
 
     for (int m = 0; m < miDisco.getPlatos().size(); m++) {
         auto getPlatos = miDisco.getPlatos();
         std::cout << "Plato: " << m + 1 << std::endl;
 
         for (int j = 0; j < getPlatos[m].getSuperficies().size(); j++) {
-            std::cout << "Superficie: " << j + 1 << std::endl;
+            std::cout << "\tSuperficie: " << j + 1 << std::endl;
 
             auto getSuperficies = getPlatos[m].getSuperficies();
             for (int k = 0; k < getSuperficies[j].getPistas().size(); k++) {
-                std::cout << "Pista: " << k + 1 << std::endl;
+                std::cout << "\t\tPista: " << k + 1 << std::endl;
 
                 auto getPistas = getSuperficies[j].getPistas();
                 for (int u = 0; u < getPistas[k].getSectores().size(); u++) {
-                    std::cout << "Sector: " << u + 1 << std::endl;
-                    std::cout << "Data: " << getPistas[k].getSectores()[u]->getData();
-                    std::cout << "===================================================" << std::endl;
+                    std::cout << "\t\t\tSector: " << u + 1 << std::endl;
+                    std::cout << "\t\t\t\tData: " << getPistas[k].getSectores()[u]->getData();
+                    std::cout << std::endl;
                 }
             }
         }
     }
+    std::cout << "Fin impresion" << std::endl;
 
 //    if (i >= newData.size()) {
 //        dataSector = newData.substr(aux + 1, newData.size() - aux + 1);
@@ -228,14 +241,25 @@ void setDisco() {
 //    for (int i = 0; i < miDisco.getPlatos().size(); i++) {
 //
 //    }
+}
 
+double convertBytesToGB(unsigned long long bytes) {
+    const double gigabyte = 1024 * 1024 * 1024;
+    return static_cast<double>(bytes) / gigabyte;
+}
+
+void printSizeDisk() {
+    unsigned long long sizeBytes = platos * SUPERFICIE * pistas * bloques * sectores * bytesSector;
+    double sizeGb = convertBytesToGB(sizeBytes);
+    std::cout << "\tDisk Size" << std::endl;
+    std::cout << "Bytes:\t" << sizeBytes << std::endl;
+    std::cout << "GB:\t" << sizeGb << std::endl;
 }
 
 void menu() {
     int option;
     do {
         std::cout << "=========== Database System ===========" << std::endl;
-        std::cout << "=======================================" << std::endl;
         std::cout << "================ MENU =================" << std::endl;
         std::cout << "1) Importar archivo." << std::endl;
         if (band) {
@@ -243,6 +267,9 @@ void menu() {
             std::cout << "3) Mostrar N° de bits del archivo." << std::endl;
             std::cout << "4) Mostrar registro." << std::endl;
             std::cout << "5) Insertar datos del disco." << std::endl;
+            if (bandDisk) {
+                std::cout << "6) Obtener tamaño del disco." << std::endl;
+            }
         }
         std::cout << "0) Salir del programa." << std::endl;
         std::cout << "Opcion: ";
@@ -277,6 +304,10 @@ void menu() {
                 break;
             case 5:
                 setDisco();
+                cleanScreen();
+                break;
+            case 6:
+                printSizeDisk();
                 cleanScreen();
                 break;
             case 0:
