@@ -161,8 +161,8 @@ void setDisco() {
     newData.erase(std::remove(newData.begin(), newData.end(), ','), newData.end());
 
     /* ---------------------------------------------------------- */
-    std::string dataAuxiliar = newData.substr(0, 100);
-    newData = dataAuxiliar;
+//    std::string dataAuxiliar = newData.substr(0, 100);gitt
+//    newData = dataAuxiliar;
     /* ---------------------------------------------------------- */
 
 
