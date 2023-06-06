@@ -11,7 +11,6 @@ std::string DATA;
 bool band = false;
 bool bandDisk = false;
 
-int disco;
 int platos;
 const int SUPERFICIE = 2;
 int pistas;
@@ -19,7 +18,8 @@ int bloques;
 int sectores;
 int bytesSector;
 Disco miDisco;
-
+std::vector<Sector *> sectoresDisco;
+std::vector<string> dataBloques;
 
 void cleanScreen() {
     std::cout << "Presiona Enter para volver al menu...";
@@ -85,7 +85,7 @@ void getNumeroBitsPorRegistro() {
             int bits = cont * 8;
             t.add(" " + to_string(++id) + " ");
             t.add(" " + to_string(bits) + " ");
-            t.add(" " + to_string(bits/8) + " ");
+            t.add(" " + to_string(bits / 8) + " ");
             t.endOfRow();
             cont = 0;
         }
@@ -157,7 +157,7 @@ void setDisco() {
     std::cout << "N° bytes por sector: ";
     std::cin >> bytesSector;
 
-    std::vector<Sector *> sectoresDisco;
+//    std::vector<Sector *> sectoresDisco;
     std::string dataSector;
     std::string newData = DATA;
 
@@ -268,16 +268,55 @@ void getDataSector() {
     int _pista;
     int _sector;
 
-    std::cout << "N Plato: "; std::cin>>_plato;
-    std::cout << "N Superficie: "; std::cin>>_superficie;
-    std::cout << "N Pista: "; std::cin>>_pista;
-    std::cout << "N Sector: "; std::cin>>_sector;
+    std::cout << "N Plato: ";
+    std::cin >> _plato;
+    std::cout << "N Superficie: ";
+    std::cin >> _superficie;
+    std::cout << "N Pista: ";
+    std::cin >> _pista;
+    std::cout << "N Sector: ";
+    std::cin >> _sector;
 
-    std::cout << miDisco.getPlatos()[--_plato].getSuperficies()[--_superficie].getPistas()[--_pista].getSectores()[--_sector]->getData() << std::endl;
+    try {
+        std::cout
+                << miDisco.getPlatos()[_plato - 1].getSuperficies()[_superficie - 1].getPistas()[_pista -
+                                                                                                 1].getSectores()[
+                        _sector - 1]->getData()
+                << std::endl;
+    } catch (...) {
+        std::cout << "null" << std::endl;
+    }
+
+}
+
+void asignarBloques() {
+    int numSectores;
+    std::cout << "Numero de Sectores por Bloque: ";
+    std::cin >> numSectores;
+
+    for (int i = 0; i < sectoresDisco.size() - 2; i += 3) {
+        std::string _data =
+                sectoresDisco[i]->getData() + sectoresDisco[i + 1]->getData() + sectoresDisco[i + 2]->getData();
+        dataBloques.push_back(_data);
+    }
+}
+
+void getDataBloque() {
+    int numBloque;
+    std::cout << "Data de Bloque N°: ";
+    std::cin >> numBloque;
+
+    std::cout << "\tData\n";
+    try {
+        std::cout << dataBloques[numBloque - 1] << std::endl;
+    } catch (...) {
+        std::cout << "null" << std::endl;
+    }
 }
 
 void menu() {
     int option;
+
     do {
         std::cout << "=========== Database System ===========" << std::endl;
         std::cout << "================ MENU =================" << std::endl;
@@ -285,11 +324,13 @@ void menu() {
         if (band) {
             std::cout << "2) Mostrar N° de bits por registro." << std::endl;
             std::cout << "3) Mostrar N° de bits del archivo." << std::endl;
-            std::cout << "4) Mostrar registro." << std::endl;
+            std::cout << "4) Mostrar registro (Especifico)." << std::endl;
             std::cout << "5) Insertar datos del disco." << std::endl;
             if (bandDisk) {
                 std::cout << "6) Obtener tamaño del disco." << std::endl;
-                std::cout << "7) Data de Sector." << std::endl;
+                std::cout << "7) Data de un Sector (Especifico)." << std::endl;
+                std::cout << "8) Asignar Bloques." << std::endl;
+                std::cout << "9) Mostrar Datos de Bloque (Especifico)." << std::endl;
             }
         }
         std::cout << "0) Salir del programa." << std::endl;
@@ -312,7 +353,7 @@ void menu() {
             case 3:
                 // int numeroBitsFile = getNumeroBitsFile();
                 std::cout << "Numero de bits por File: " << getNumeroBitsFile() << " bits" << std::endl;
-                std::cout << "Numero de bytes por File: " << getNumeroBitsFile()/8 << " bytes" << std::endl;
+                std::cout << "Numero de bytes por File: " << getNumeroBitsFile() / 8 << " bytes" << std::endl;
                 cleanScreen();
                 break;
             case 4:
@@ -334,6 +375,14 @@ void menu() {
                 break;
             case 7:
                 getDataSector();
+                cleanScreen();
+                break;
+            case 8:
+                asignarBloques();
+                cleanScreen();
+                break;
+            case 9:
+                getDataBloque();
                 cleanScreen();
                 break;
             case 0:

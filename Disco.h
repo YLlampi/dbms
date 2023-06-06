@@ -137,7 +137,6 @@ public:
     }
 
     const std::vector<Plato> &getPlatos() const {
-        std::cout << "PLATOS" << std::endl;
         return platos;
     }
 
