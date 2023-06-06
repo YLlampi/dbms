@@ -40,7 +40,7 @@ void inputFiles() {
     std::ofstream outputFile(NAME_DATA);
 
     std::string line;
-    std::getline(inputFile, line);
+//    std::getline(inputFile, line);
 
     while (std::getline(inputFile, line)) {
         std::stringstream ss(line);
@@ -281,7 +281,7 @@ double convertBytesToGB(unsigned long long bytes) {
 }
 
 void printSizeDisk() {
-    unsigned long long sizeBytes = platos * SUPERFICIE * pistas * bloques * sectores * bytesSector;
+    unsigned long long sizeBytes = platos * SUPERFICIE * pistas * sectores * bytesSector;
     double sizeGb = convertBytesToGB(sizeBytes);
     std::cout << "\tDisk Size" << std::endl;
     std::cout << "Bytes:\t" << sizeBytes << std::endl;
