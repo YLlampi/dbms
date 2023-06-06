@@ -68,7 +68,23 @@ void inputFiles() {
     std::cout << "Archivo importado correctamente..." << std::endl;
 }
 
+std::streamsize obtenerTamanoBytesFila(std::ifstream& archivo) {
+    std::streampos inicioLinea = archivo.tellg();
+
+    char c;
+    std::streamsize tamanoFila = 0;
+
+    while (archivo.get(c) && c != '\n') {
+        tamanoFila++;
+    }
+
+    archivo.seekg(inicioLinea, std::ios::beg);
+
+    return tamanoFila;
+}
+
 void getNumeroBitsPorRegistro() {
+    /*
     TextTable t('-', '|', '+');
 
     t.add(" id ");
@@ -91,16 +107,51 @@ void getNumeroBitsPorRegistro() {
         }
     }
     std::cout << t << std::endl;
+     */
+
+    TextTable t('-', '|', '+');
+
+    t.add(" id ");
+    t.add(" N de bytes ");
+    t.add(" N de bits ");
+    t.endOfRow();
+    std::ifstream archivo(NAME_FILE, std::ios::binary);
+
+    int _cont = 0;
+
+    if (archivo) {
+        while (archivo.peek() != EOF) {
+            std::streamsize tamanoFila = obtenerTamanoBytesFila(archivo);
+            t.add(" " + to_string(++_cont) + " ");
+            t.add(" " + to_string(tamanoFila) + " ");
+            t.add(" " + to_string(tamanoFila * 8) + " ");
+            t.endOfRow();
+
+            archivo.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        archivo.close();
+    } else {
+        std::cout << "Error al abrir el archivo." << std::endl;
+    }
+
+    std::cout << t << std::endl;
+
+
 }
 
-int getNumeroBitsFile() {
-    int cont = 0;
-    for (char i: DATA)
-        if (i != ',' and i != '#') cont++;
+std::streamsize getNumeroBitsFile() {
+    std::ifstream archivo(NAME_FILE, std::ios::binary);
 
-    int totalBits = cont * 8;
-    return totalBits;
+    std::streampos inicioArchivo = archivo.tellg();
+    archivo.seekg(0, std::ios::end);
+
+    std::streampos tamano = archivo.tellg();
+    archivo.seekg(inicioArchivo, std::ios::beg);
+
+    return tamano;
 }
+
 
 void getRegistro(int numeroRegistro) {
     TextTable t('-', '|', '+');
@@ -164,12 +215,6 @@ void setDisco() {
     newData.erase(std::remove(newData.begin(), newData.end(), '#'), newData.end());
     newData.erase(std::remove(newData.begin(), newData.end(), ','), newData.end());
 
-    /* ---------------------------------------------------------- */
-//    std::string dataAuxiliar = newData.substr(0, 100);gitt
-//    newData = dataAuxiliar;
-    /* ---------------------------------------------------------- */
-
-
     int i;
     int aux;
     for (i = 0; i < newData.size(); i += bytesSector) {
@@ -184,7 +229,7 @@ void setDisco() {
         sectoresDisco[j]->setNext(sectoresDisco[j + 1]);
     }
     int contSectores = 0;
-    // Disco miDisco(platos, SUPERFICIE, pistas, bloques, sectores, bytesSector);
+
     miDisco.setData(platos, SUPERFICIE, pistas, sectores, bytesSector);
     bandDisk = true;
 
@@ -228,25 +273,6 @@ void setDisco() {
             }
         }
     }
-    std::cout << "Fin impresion" << std::endl;
-
-//    if (i >= newData.size()) {
-//        dataSector = newData.substr(aux + 1, newData.size() - aux + 1);
-//        Sector miSector(bytesSector);
-//        miSector.setData(dataSector);
-//        sectoresDisco.push_back(miSector);
-//    }
-
-//    for(auto as: sectoresDisco){
-//        cout << as.getData() << endl;
-//        cout << "============================================================================================" << endl;
-//    }
-
-//    Disco miDisco(platos);
-//    for (int i = 0; i < miDisco.getPlatos().size(); i++) {
-//
-//    }
-
 }
 
 double convertBytesToGB(unsigned long long bytes) {
@@ -352,8 +378,8 @@ void menu() {
                 break;
             case 3:
                 // int numeroBitsFile = getNumeroBitsFile();
-                std::cout << "Numero de bits por File: " << getNumeroBitsFile() << " bits" << std::endl;
-                std::cout << "Numero de bytes por File: " << getNumeroBitsFile() / 8 << " bytes" << std::endl;
+                std::cout << "Numero de bits por File: " << getNumeroBitsFile() * 8 << " bits" << std::endl;
+                std::cout << "Numero de bytes por File: " << getNumeroBitsFile() << " bytes" << std::endl;
                 cleanScreen();
                 break;
             case 4:
