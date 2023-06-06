@@ -18,6 +18,8 @@ int pistas;
 int bloques;
 int sectores;
 int bytesSector;
+Disco miDisco;
+
 
 void cleanScreen() {
     std::cout << "Presiona Enter para volver al menu...";
@@ -71,6 +73,7 @@ void getNumeroBitsPorRegistro() {
 
     t.add(" id ");
     t.add(" N de bits ");
+    t.add(" N de bytes ");
     t.endOfRow();
 
     int cont = 0;
@@ -82,6 +85,7 @@ void getNumeroBitsPorRegistro() {
             int bits = cont * 8;
             t.add(" " + to_string(++id) + " ");
             t.add(" " + to_string(bits) + " ");
+            t.add(" " + to_string(bits/8) + " ");
             t.endOfRow();
             cont = 0;
         }
@@ -146,8 +150,8 @@ void setDisco() {
     std::cin >> platos;
     std::cout << "N° Pistas: ";
     std::cin >> pistas;
-    std::cout << "N° Bloques: ";
-    std::cin >> bloques;
+//    std::cout << "N° Bloques: ";
+//    std::cin >> bloques;
     std::cout << "N° Sectores: ";
     std::cin >> sectores;
     std::cout << "N° bytes por sector: ";
@@ -180,7 +184,8 @@ void setDisco() {
         sectoresDisco[j]->setNext(sectoresDisco[j + 1]);
     }
     int contSectores = 0;
-    Disco miDisco(platos, SUPERFICIE, pistas, bloques, sectores, bytesSector);
+    // Disco miDisco(platos, SUPERFICIE, pistas, bloques, sectores, bytesSector);
+    miDisco.setData(platos, SUPERFICIE, pistas, sectores, bytesSector);
     bandDisk = true;
 
     std::vector<Plato> platosDisco(platos);
@@ -241,6 +246,7 @@ void setDisco() {
 //    for (int i = 0; i < miDisco.getPlatos().size(); i++) {
 //
 //    }
+
 }
 
 double convertBytesToGB(unsigned long long bytes) {
@@ -256,6 +262,20 @@ void printSizeDisk() {
     std::cout << "GB:\t" << sizeGb << std::endl;
 }
 
+void getDataSector() {
+    int _plato;
+    int _superficie;
+    int _pista;
+    int _sector;
+
+    std::cout << "N Plato: "; std::cin>>_plato;
+    std::cout << "N Superficie: "; std::cin>>_superficie;
+    std::cout << "N Pista: "; std::cin>>_pista;
+    std::cout << "N Sector: "; std::cin>>_sector;
+
+    std::cout << miDisco.getPlatos()[--_plato].getSuperficies()[--_superficie].getPistas()[--_pista].getSectores()[--_sector]->getData() << std::endl;
+}
+
 void menu() {
     int option;
     do {
@@ -269,6 +289,7 @@ void menu() {
             std::cout << "5) Insertar datos del disco." << std::endl;
             if (bandDisk) {
                 std::cout << "6) Obtener tamaño del disco." << std::endl;
+                std::cout << "7) Data de Sector." << std::endl;
             }
         }
         std::cout << "0) Salir del programa." << std::endl;
@@ -290,7 +311,8 @@ void menu() {
                 break;
             case 3:
                 // int numeroBitsFile = getNumeroBitsFile();
-                std::cout << "Numero de bits por File: " << getNumeroBitsFile() << std::endl;
+                std::cout << "Numero de bits por File: " << getNumeroBitsFile() << " bits" << std::endl;
+                std::cout << "Numero de bytes por File: " << getNumeroBitsFile()/8 << " bytes" << std::endl;
                 cleanScreen();
                 break;
             case 4:
@@ -308,6 +330,10 @@ void menu() {
                 break;
             case 6:
                 printSizeDisk();
+                cleanScreen();
+                break;
+            case 7:
+                getDataSector();
                 cleanScreen();
                 break;
             case 0:

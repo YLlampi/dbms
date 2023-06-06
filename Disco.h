@@ -128,7 +128,16 @@ public:
         this->platos.resize(numeroPlatos);
     }
 
+    void setData(int _plato, int _superficie, int _pista, int _sector, int _bytesSector) {
+        this->numPlatos = _plato;
+        this->numSuperficies = _superficie;
+        this->numPistas = _pista;
+        this->numSectores = _sector;
+        this->numBytes = _bytesSector;
+    }
+
     const std::vector<Plato> &getPlatos() const {
+        std::cout << "PLATOS" << std::endl;
         return platos;
     }
 
