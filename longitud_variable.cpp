@@ -387,7 +387,7 @@ void buscarRegistroVariable(const string& nombre, const Tabla& tabla, const stri
     }
 }
 
-void buscarRegistroWhere(const Tabla& tabla, const string& archivoNombre, int posicion, string& name) {
+void buscarRegistroWhere(const Tabla& tabla, const string& archivoNombre, int posicion, const string& nombre) {
     ifstream archivo(archivoNombre, ios::binary);
     if (archivo.is_open()) {        
         // Verificar si el archivo está vacío
@@ -407,7 +407,8 @@ void buscarRegistroWhere(const Tabla& tabla, const string& archivoNombre, int po
         while (!archivo.eof()) {
             registro = leerRegistroVariable(archivo);
             if (!archivo.eof()) {
-                if(registro.valores[posicion] == name) {
+                 // cout << registro.valores[posicion] << " --- " << nombre << endl;
+                if(registro.valores[posicion] == nombre) {
                     for (const auto& valor : registro.valores) {
                     // cout << valor << " ";
                     t.add(" " + valor + " ");
@@ -593,7 +594,7 @@ int main() {
                     cout << "Ingrese nombre del atributo: ";
                     cin>>atributoWhere;
                     auto vec = tabla->atributos;
-                    auto it = std::find(vec.begin(), vec.end(), [&](const Atributo& atributo) {
+                    auto it = std::find_if(vec.begin(), vec.end(), [&](const Atributo& atributo) {
                                return atributo.nombre == atributoWhere;
                            });
 
@@ -603,7 +604,7 @@ int main() {
                         string nombreBuscar;
                         cout << "Atributo debe ser igual a: ";
                         cin >> nombreBuscar;
-                        buscarRegistroWhere(*tabla, tabla->metadata.nombre + ".bin", posicion, atributoWhere);
+                        buscarRegistroWhere(*tabla, tabla->metadata.nombre + ".bin", posicion, nombreBuscar);
                         
                     } else {
                         std::cout << "Atributo no encontrado." << std::endl;
