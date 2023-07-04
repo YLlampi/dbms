@@ -63,7 +63,7 @@ void almacenarRegistroVariable(const RegistroVariable& registro, const string& a
     if (archivo.is_open()) {
         escribirRegistroVariable(registro, archivo);
         archivo.close();
-        cout << "Registro almacenado con éxito." << endl;
+        // cout << "Registro almacenado con éxito." << endl;
     } else {
         cout << "No se pudo abrir el archivo." << endl;
     }
@@ -251,7 +251,7 @@ void almacenarRegistroVariable(const RegistroVariable& registro, const Tabla& ta
     if (archivo.is_open()) {
         escribirRegistroVariable(registro, archivo);
         archivo.close();
-        cout << "Registro almacenado con éxito." << endl;
+        // cout << "Registro almacenado con éxito." << endl;
     } else {
         cout << "No se pudo abrir el archivo." << endl;
     }
@@ -259,7 +259,7 @@ void almacenarRegistroVariable(const RegistroVariable& registro, const Tabla& ta
 
 void recuperarRegistrosVariables(const Tabla& tabla, const string& archivoNombre) {
     ifstream archivo(archivoNombre, ios::binary);
-    if (archivo.is_open()) {        
+    if (archivo.is_open()) {
         // Verificar si el archivo está vacío
         archivo.seekg(0, ios::end);
         if (archivo.tellg() == 0) {
@@ -268,9 +268,13 @@ void recuperarRegistrosVariables(const Tabla& tabla, const string& archivoNombre
             return;
         }
 
-        // Regresar al inicio del archivo
         TextTable t('-', '|', '+');
-        
+        for(const auto& i : tabla.atributos) {
+            t.add(" " + i.nombre + " ");
+        }
+        t.endOfRow();
+
+        // Regresar al inicio del archivo
         archivo.seekg(0, ios::beg);
 
         RegistroVariable registro;
@@ -366,6 +370,11 @@ void buscarRegistroVariable(const string& nombre, const Tabla& tabla, const stri
                 if (registro.valores[0] == nombre) {
                     cout << "Registro encontrado:" << endl;
                     TextTable t('-', '|', '+');
+                    for(const auto& i : tabla.atributos) {
+                        t.add(" " + i.nombre + " ");
+                    }
+                    t.endOfRow();
+
                     for (const auto& valor : registro.valores) {
                         // cout << valor << " ";
                         t.add(" " + valor + " ");
@@ -400,6 +409,10 @@ void buscarRegistroWhere(const Tabla& tabla, const string& archivoNombre, int po
 
         // Regresar al inicio del archivo
         TextTable t('-', '|', '+');
+        for(const auto& i : tabla.atributos) {
+            t.add(" " + i.nombre + " ");
+        }
+        t.endOfRow();
         
         archivo.seekg(0, ios::beg);
 
